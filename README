@@ -1,0 +1,62 @@
+Long long ago in 2004-2005, I helped to run Stream Madness, a provider of
+streaming audio servers. We mainly used Shoutcast for internet radio and
+Ventrilo for VoIP. We collected all of the Shoutcast log data, and
+provided custom reports to answer clients' questions. Perl and Sqlite
+proved particularly useful in this endeavor.
+
+The network consisted of several dedicated machines, being from an era
+before the ubiquity of VPSs and the like. Since most of them were just
+shoveling packets around, they had spare processing capacity.
+
+After creation of a logs database on a nearly idle host, the process for collecting logs was thus:
+
+1. For each Shoutcast host:
+
+A. Using the main logs database, create a separate smaller intermediate database with
+data needed for logs processing.
+
+B. scp intermediate database to Shoutcast host.
+
+C. Run script to add new data from logs to intermediate database.
+
+D. scp database back to logs host.
+
+E. Run script to insert new data from intermediate database into main logs database.
+
+F. Remove intermediate database.
+
+2. Generate html reports, graph, etc.
+
+The code in this repository is released under the BSD license.
+
+A quick tour:
+
+dnsexport.pl: export ip addresses for dns querying in a mannor similar
+to that described above
+
+dns.pl: add ptr record data for ips to intermediate dns database
+
+domains.pl: use GD to create graph of Shoutcast listeners by dns host
+type (commercial, government, etc.).
+
+export.pl: Completes step 1A above.
+
+genstats.pl: Create simple html page with monthly stats for a Shoutcast
+server.
+
+import.pl: Completes step 1E above.
+
+listenersd.pl: Use GD to generate graph of daily listeners for a Shoutcast server.
+
+process.sh: shell script to be run on Shoutcast host to automate log
+processing
+
+slog.pl: Processes Shoutcast server log and adds data to intermediate
+database.
+
+ttsld.pl: Use GD to generate daily graph of total time spent listening
+for a Shoutcast server.
+
+ttslh.pl: Use GD to generate hourly graph of total time spent listening
+for a Shoutcast server.
+
